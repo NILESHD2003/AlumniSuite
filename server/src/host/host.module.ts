@@ -4,6 +4,6 @@ import { HostService } from './host.service';
 
 @Module({
   controllers: [HostController],
-  providers: [HostService]
+  providers: [HostService],
 })
 export class HostModule {}

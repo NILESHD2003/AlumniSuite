@@ -1,4 +1,10 @@
-const inviteMail = (email, hostName, token, webUrl, hostEmail) => {
+export const inviteMail = (
+  email: string,
+  hostName: string,
+  token: string,
+  webUrl: string,
+  hostEmail: string,
+) => {
   return `<!DOCTYPE html>
 <html lang="en">
 
@@ -30,7 +36,7 @@ const inviteMail = (email, hostName, token, webUrl, hostEmail) => {
             /* box-shadow: 0 4px 8px #3658a1; */
         }
 
-        
+
 
         .header {
             text-align: center;
@@ -137,5 +143,3 @@ const inviteMail = (email, hostName, token, webUrl, hostEmail) => {
 </body>
 </html>`;
 };
-
-module.exports = inviteMail;

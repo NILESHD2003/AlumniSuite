@@ -5,9 +5,9 @@ import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { PrismaModule } from './prisma/prisma.module';
 import { PostModule } from './post/post.module';
 import { HostModule } from './host/host.module';
+import { MemberModule } from './member/member.module';
 
 @Module({
   imports: [
@@ -15,9 +15,9 @@ import { HostModule } from './host/host.module';
       isGlobal: true,
     }),
     AuthModule,
-    PrismaModule,
     PostModule,
     HostModule,
+    MemberModule,
   ],
   controllers: [AppController],
   providers: [

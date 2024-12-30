@@ -1,11 +1,17 @@
 import {
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
   MinLength,
 } from 'class-validator';
+
+enum AccountType {
+  HOST = 'host',
+  ALUMNI = 'alumni',
+}
 
 export class loginDto {
   @IsNotEmpty()
@@ -16,6 +22,10 @@ export class loginDto {
   @IsString()
   // @MinLength(8)
   password: string;
+
+  @IsNotEmpty()
+  @IsEnum(AccountType)
+  role: AccountType;
 }
 
 export class registerHostDto {
@@ -49,4 +59,14 @@ export class registerHostDto {
   @MinLength(10)
   @MaxLength(10)
   phone: string;
+}
+
+export class sendOtpDto {
+  @IsNotEmpty()
+  @IsString()
+  hostName: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 }

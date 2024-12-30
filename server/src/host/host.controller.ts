@@ -12,4 +12,6 @@ export class HostController {
   ): Promise<{ success: boolean; message: string }> {
     return this.hostService.inviteMember(dto);
   }
+
+  //TODO: Get all members
 }

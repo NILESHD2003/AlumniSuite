@@ -1,8 +1,8 @@
-const nodemailer = require('nodemailer');
+import * as nodemailer from 'nodemailer';
 
-const mailSender = async (email, title, body) => {
+const mailSender = async (email: string, title: string, body: string) => {
   try {
-    let transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       auth: {
         user: process.env.MAIL_USER,
@@ -11,7 +11,7 @@ const mailSender = async (email, title, body) => {
       secure: false,
     });
 
-    let info = await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: `"AluminiSuite | Nilesh Deshpande" <${process.env.MAIL_USER}>`, // sender address
       to: `${email}`, // list of receivers
       subject: `${title}`, // Subject line
@@ -21,8 +21,8 @@ const mailSender = async (email, title, body) => {
     return info;
   } catch (error) {
     console.log(error.message);
-    return error.message;
+    throw new Error(error.message);
   }
 };
 
-module.exports = mailSender;
+export default mailSender;
