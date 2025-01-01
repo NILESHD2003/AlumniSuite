@@ -23,7 +23,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         : 'Internal server error';
 
     // Log unexpected errors for debugging
-    console.error('Unhandled exception:', exception);
+    if (status >= 500) {
+      console.error('Unhandled server error:', {
+        status,
+        exception,
+      });
+    }
 
     response.status(status).json({
       success: false,

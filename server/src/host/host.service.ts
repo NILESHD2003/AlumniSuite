@@ -15,14 +15,12 @@ export class HostService {
   async inviteMember(
     dto: InvitationDto,
   ): Promise<{ success: boolean; message: string }> {
-    // check if the host exists
     const host = await Host.findById(dto.hostId);
 
     if (!host) {
       throw new UnauthorizedException('Host not found');
     }
 
-    // check if the email is already invited
     const invite = await Invite.findOne({
       email: dto.email,
       hostId: dto.hostId,
@@ -32,7 +30,6 @@ export class HostService {
       throw new ConflictException('Member is already Invited.');
     }
 
-    // generate an invitation code
     const inviteToken: string = generate({
       length: 32,
       numbers: true,

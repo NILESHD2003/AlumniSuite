@@ -10,7 +10,7 @@ import {
 
 enum AccountType {
   HOST = 'host',
-  ALUMNI = 'alumni',
+  ALUMNI = 'member',
 }
 
 export class loginDto {

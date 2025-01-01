@@ -13,6 +13,8 @@ import { loginDto, registerHostDto, sendOtpDto } from './dto/auth.dto';
 import { ConfigService } from '@nestjs/config';
 import Host from '../host/schema/host.schema';
 import OTP from './schema/OTP.schema';
+import Member from '../member/schema/member.schema';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -21,11 +23,14 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
-  async loginHost(dto: loginDto): Promise<{
+  async loginHost(
+    dto: loginDto,
+    res: Response,
+  ): Promise<{
     status: number;
     success: boolean;
-    access_token: string;
     message: string;
+    access_token: string;
   }> {
     // Check if the host exists
     const host = await Host.findOne({
@@ -43,9 +48,59 @@ export class AuthService {
     }
 
     // Generate and return the JWT token
-    const token = await this.signToken(host.id, host.email);
+    const token = await this.signToken(host.id, host.email, 'host');
+
+    res.cookie('access_token', token, {
+      httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      sameSite: 'strict', // Helps prevent CSRF attacks
+      maxAge: 7 * 24 * 60 * 60 * 1000, // Set cookie expiration to 7 days
+    });
+
     return {
-      status: HttpStatus.CONTINUE,
+      status: HttpStatus.OK,
+      success: true,
+      message: 'Login successful',
+      access_token: token,
+    };
+  }
+
+  async loginMember(
+    dto: loginDto,
+    res: Response,
+  ): Promise<{
+    status: number;
+    success: boolean;
+    message: string;
+    access_token: string;
+  }> {
+    // Check if the member exists
+    const member = await Member.findOne({
+      email: dto.email,
+    });
+
+    if (!member) {
+      throw new NotFoundException('Member not registered');
+    }
+
+    // Verify the password
+    const isPasswordValid = await bcrypt.compare(dto.password, member.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Generate and return the JWT token
+    const token = await this.signToken(member.id, member.email, 'member');
+
+    res.cookie('access_token', token, {
+      httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      sameSite: 'strict', // Helps prevent CSRF attacks
+      maxAge: 7 * 24 * 60 * 60 * 1000, // Set cookie expiration to 7 days
+    });
+
+    return {
+      status: HttpStatus.OK,
       success: true,
       message: 'Login successful',
       access_token: token,
@@ -87,7 +142,7 @@ export class AuthService {
     });
 
     // Generate and return the JWT token
-    const token = await this.signToken(newHost.id, newHost.email);
+    const token = await this.signToken(newHost.id, newHost.email, 'host');
     return {
       status: HttpStatus.CREATED,
       success: true,
@@ -140,10 +195,18 @@ export class AuthService {
     };
   }
 
-  private async signToken(userId: string, email: string): Promise<string> {
-    const payload = { sub: userId, email };
+  private async signToken(
+    userId: string,
+    email: string,
+    role: string,
+  ): Promise<string> {
+    const payload = { sub: userId, email, role };
     const secret = this.config.get<string>('JWT_SECRET');
 
-    return this.jwt.signAsync(payload, { secret, expiresIn: '7d' });
+    return this.jwt.signAsync(payload, {
+      secret,
+      expiresIn: '7d',
+      algorithm: 'HS512',
+    });
   }
 }

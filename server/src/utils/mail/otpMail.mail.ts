@@ -1,6 +1,6 @@
 const otpMail = (otp: string, instituteName: string): string => {
   // OTP is a string of 6 characters
-  const otpArray = otp.split("");
+  const otpArray = otp.split('');
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -23,8 +23,7 @@ const otpMail = (otp: string, instituteName: string): string => {
 
         .container {
             max-width: 600px;
-            margin: 20px auto;
-            margin-top: 0;
+            margin: 0 auto 20px;
             padding: 20px;
         }
 
