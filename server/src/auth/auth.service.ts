@@ -41,20 +41,18 @@ export class AuthService {
       throw new NotFoundException('Host not registered');
     }
 
-    // Verify the password
     const isPasswordValid = await bcrypt.compare(dto.password, host.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Generate and return the JWT token
     const token = await this.signToken(host.id, host.email, 'host');
 
     res.cookie('access_token', token, {
-      httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-      sameSite: 'strict', // Helps prevent CSRF attacks
-      maxAge: 7 * 24 * 60 * 60 * 1000, // Set cookie expiration to 7 days
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return {

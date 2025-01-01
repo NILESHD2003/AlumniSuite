@@ -60,14 +60,13 @@ export class JwtAuthGuard implements CanActivate {
     try {
       return this.jwtService.verify(token, {
         secret: this.config.get<string>('JWT_SECRET'),
-      }); // Verifies JWT and returns payload (user info)
+      });
     } catch (error) {
       console.error(error);
       throw new UnauthorizedException('Token verification failed');
     }
   }
 
-  // Method to check if the user has the required role
   private checkRole(user: any, requiredRoles: string[]): boolean {
     const userRole = user.role;
 
